@@ -1,4 +1,4 @@
-# === IntelliJ IDEA (главное — это в самом верху!) ===
+# === IntelliJ IDEA  ===
 .idea/
 *.iws
 *.iml
@@ -42,11 +42,10 @@ nbdist/
 # === macOS ===
 .DS_Store
 
-# === Исключения (если вдруг где-то внутри src нужен target/build) ===
+# === Исключения===
 !**/src/main/**/target/
 !**/src/test/**/target/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-# === Старый мусор, который ты раньше имел ===
 backend/marketfusion/HELP.md
