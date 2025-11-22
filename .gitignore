@@ -1,0 +1,52 @@
+# === IntelliJ IDEA (главное — это в самом верху!) ===
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# === Maven ===
+target/
+backend/**/target/
+frontend/**/target/
+.mvn/wrapper/maven-wrapper.jar
+
+# === Node.js / Frontend ===
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+build/
+frontend/build/
+.env
+.env.local
+
+# === Общие IDE-файлы ===
+.classpath
+.project
+.settings
+.factorypath
+.springBeans
+.sts4-cache
+.apt_generated
+
+# === NetBeans ===
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# === VS Code ===
+.vscode/
+
+# === macOS ===
+.DS_Store
+
+# === Исключения (если вдруг где-то внутри src нужен target/build) ===
+!**/src/main/**/target/
+!**/src/test/**/target/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# === Старый мусор, который ты раньше имел ===
+backend/marketfusion/HELP.md
