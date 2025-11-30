@@ -1,8 +1,10 @@
 package com.marketfusion.service.impl;
 
 
+import com.marketfusion.dto.product.ProductRequestDto;
 import com.marketfusion.entity.Product;
 import com.marketfusion.entity.Shop;
+import com.marketfusion.mapper.ProductMapper;
 import com.marketfusion.repository.ProductRepository;
 import com.marketfusion.repository.ShopRepository;
 import com.marketfusion.service.ProductService;
@@ -18,11 +20,11 @@ public class ProductServiceImpl implements ProductService {
     private final ShopRepository shopRepository;
 
     @Override
-    public Product create(Product product, Long shopId) {
+    public Product create(ProductRequestDto dto, Long shopId) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new RuntimeException("Магазин не найден"));
 
-        product.setShop(shop);
+        Product product = ProductMapper.toEntity(dto, shop);
         return productRepository.save(product);
     }
 

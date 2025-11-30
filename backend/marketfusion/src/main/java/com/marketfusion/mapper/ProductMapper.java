@@ -3,16 +3,18 @@ package com.marketfusion.mapper;
 import com.marketfusion.dto.product.ProductRequestDto;
 import com.marketfusion.dto.product.ProductResponseDto;
 import com.marketfusion.entity.Product;
+import com.marketfusion.entity.Shop;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ProductMapper {
 
-    public Product toEntity(ProductRequestDto dto) {
+    public Product toEntity(ProductRequestDto dto, Shop shop) {
         Product product = new Product();
         product.setName(dto.getName());
         product.setSku(dto.getSku());
         product.setPrice(dto.getPrice());
+        product.setShop(shop);
         return product;
     }
 

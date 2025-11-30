@@ -48,13 +48,12 @@ public class ProductController {
                     content = @Content
             )
     })
-    public ResponseEntity<Product> createProduct(
+    public ResponseEntity<ProductResponseDto> createProduct(
             @PathVariable Long shopId,
             @RequestBody ProductRequestDto requestDto
     ) {
-        Product entity = ProductMapper.toEntity(requestDto);
-        Product created = productService.create(entity, shopId);
-        return ResponseEntity.status(201).body(created);
+        Product created = productService.create(requestDto, shopId);
+        return ResponseEntity.status(201).body(ProductMapper.toDto(created));
     }
 
     @GetMapping("/shop/{shopId}")
