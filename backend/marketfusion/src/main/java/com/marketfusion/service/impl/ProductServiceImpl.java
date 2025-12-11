@@ -2,8 +2,10 @@ package com.marketfusion.service.impl;
 
 
 import com.marketfusion.dto.product.ProductRequestDto;
+import com.marketfusion.dto.product.ProductUpdateDto;
 import com.marketfusion.entity.Product;
 import com.marketfusion.entity.Shop;
+import com.marketfusion.exception.ProductNotFoundException;
 import com.marketfusion.mapper.ProductMapper;
 import com.marketfusion.repository.ProductRepository;
 import com.marketfusion.repository.ShopRepository;
@@ -31,5 +33,25 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getByShop(Long shopId) {
         return productRepository.findByShopId(shopId);
+    }
+
+    @Override
+    public Product update(Long id, ProductUpdateDto dto) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+        product.setName(dto.getName());
+        product.setSku(dto.getSku());
+        product.setPrice(dto.getPrice());
+
+        return productRepository.save(product);
+
+    }
+
+    @Override
+    public void delete(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+
+        productRepository.delete(product);
     }
 }

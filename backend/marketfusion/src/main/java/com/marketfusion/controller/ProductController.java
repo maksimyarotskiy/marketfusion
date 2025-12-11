@@ -2,6 +2,7 @@ package com.marketfusion.controller;
 
 import com.marketfusion.dto.product.ProductRequestDto;
 import com.marketfusion.dto.product.ProductResponseDto;
+import com.marketfusion.dto.product.ProductUpdateDto;
 import com.marketfusion.entity.Product;
 import com.marketfusion.mapper.ProductMapper;
 import com.marketfusion.repository.ProductRepository;
@@ -56,6 +57,7 @@ public class ProductController {
         return ResponseEntity.status(201).body(ProductMapper.toDto(created));
     }
 
+
     @GetMapping("/shop/{shopId}")
     @Operation(summary = "Получить товары магазина", description = "Возвращает товары по id магазина")
     @ApiResponses({
@@ -73,8 +75,6 @@ public class ProductController {
                     content = @Content
             )
     })
-
-
     public ResponseEntity<List<ProductResponseDto>> getProductsByShop(@PathVariable Long shopId) {
         List<Product> products = productService.getByShop(shopId);
         return ResponseEntity.ok(
@@ -82,5 +82,22 @@ public class ProductController {
                         .map(ProductMapper::toDto)
                         .toList()
         );
+    }
+
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Обновить товар", description = "Обновляет данные товара по ID")
+    public ResponseEntity<ProductResponseDto> updateProduct(
+            @PathVariable Long id,
+            @RequestBody ProductUpdateDto dto
+            ) {
+        Product updated = productService.update(id, dto);
+        return ResponseEntity.ok(ProductMapper.toDto(updated));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        productService.delete(id);
+        return ResponseEntity.noContent().build();// почему пустой возвращаем и еще билдим в конце
     }
 }

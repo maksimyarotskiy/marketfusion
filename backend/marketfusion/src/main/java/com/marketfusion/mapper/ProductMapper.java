@@ -2,6 +2,7 @@ package com.marketfusion.mapper;
 
 import com.marketfusion.dto.product.ProductRequestDto;
 import com.marketfusion.dto.product.ProductResponseDto;
+import com.marketfusion.dto.product.ProductUpdateDto;
 import com.marketfusion.entity.Product;
 import com.marketfusion.entity.Shop;
 import lombok.experimental.UtilityClass;
@@ -26,5 +27,11 @@ public class ProductMapper {
         dto.setPrice(product.getPrice());
         dto.setShopId(product.getShop().getId());
         return dto;
+    }
+
+    public void updateEntity(Product product, ProductUpdateDto dto) {
+        product.setName(dto.getName());
+        product.setSku(dto.getSku());
+        product.setPrice(dto.getPrice());
     }
 }
