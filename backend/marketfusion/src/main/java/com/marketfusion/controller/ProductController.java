@@ -5,7 +5,6 @@ import com.marketfusion.dto.product.ProductResponseDto;
 import com.marketfusion.dto.product.ProductUpdateDto;
 import com.marketfusion.entity.Product;
 import com.marketfusion.mapper.ProductMapper;
-import com.marketfusion.repository.ProductRepository;
 import com.marketfusion.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -98,6 +97,6 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.delete(id);
-        return ResponseEntity.noContent().build();// почему пустой возвращаем и еще билдим в конце
+        return ResponseEntity.noContent().build();
     }
 }
