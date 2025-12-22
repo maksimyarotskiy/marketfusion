@@ -23,4 +23,8 @@ public class Shop {
 
     @Column(name = "api_key")
     private String apiKey;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id", nullable = false)
+    private Seller seller;
 }
