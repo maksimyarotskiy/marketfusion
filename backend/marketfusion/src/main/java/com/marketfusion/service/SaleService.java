@@ -12,7 +12,7 @@ import java.util.List;
 public class SaleService {
     private final SaleRepository saleRepository;
 
-    public Sale sale(Sale sale) {
+    public Sale save(Sale sale) {
         return saleRepository.save(sale);
     }
 
