@@ -15,3 +15,7 @@ spring:
 
 server:
   port: 8080
+
+jwt:
+  secret: dev_9fA3xP2LqM7ZrYwE8cJH5bT0kS1NDU_marketfusion
+  expiration: 3600000

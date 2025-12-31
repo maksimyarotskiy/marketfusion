@@ -1,9 +1,11 @@
 package com.marketfusion.service;
 
 
+import com.marketfusion.config.PasswordConfig;
 import com.marketfusion.entity.Seller;
 import com.marketfusion.repository.SellerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,7 +14,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SellerService {
+
     private final SellerRepository sellerRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public Seller create(String mail, String password) {
         sellerRepository.findByEmail(mail)
@@ -22,7 +26,7 @@ public class SellerService {
 
         Seller seller = Seller.builder()
                 .email(mail)
-                .password(password)
+                .password(passwordEncoder.encode(password))
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -35,7 +39,12 @@ public class SellerService {
 
     public Seller getById(Long id) {
         return sellerRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Seller not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Seller's id not found"));
+    }
+
+    public Seller getByEmail(String email) {
+        return sellerRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Seller's email not found"));
     }
 
 }
