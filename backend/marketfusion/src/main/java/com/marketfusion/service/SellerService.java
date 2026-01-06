@@ -1,7 +1,7 @@
 package com.marketfusion.service;
 
 
-import com.marketfusion.config.PasswordConfig;
+import com.marketfusion.entity.Role;
 import com.marketfusion.entity.Seller;
 import com.marketfusion.repository.SellerRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +28,7 @@ public class SellerService {
                 .email(mail)
                 .password(passwordEncoder.encode(password))
                 .createdAt(LocalDateTime.now())
+                .role(Role.SELLER)
                 .build();
 
         return sellerRepository.save(seller);

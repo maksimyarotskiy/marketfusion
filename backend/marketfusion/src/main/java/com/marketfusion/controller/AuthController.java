@@ -4,9 +4,8 @@ import com.marketfusion.dto.auth.AuthResponseDto;
 import com.marketfusion.dto.auth.LoginRequestDto;
 import com.marketfusion.dto.auth.RegisterRequestDto;
 import com.marketfusion.entity.Seller;
-import com.marketfusion.security.JwtAuthenticationFilter;
 import com.marketfusion.security.JwtService;
-import com.marketfusion.service.AuthService;
+import com.marketfusion.security.SellerDetailsService;
 import com.marketfusion.service.SellerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,18 +23,25 @@ public class AuthController {
 
     private final SellerService sellerService;
     private final JwtService jwtService;
-    private final AuthService authService;
+    private final AuthenticationManager authenticationManager;
+    private final SellerDetailsService sellerDetailsService;
 
     @PostMapping("/register")
     public AuthResponseDto register(@Valid @RequestBody RegisterRequestDto dto) {
         Seller seller = sellerService.create(dto.getEmail(), dto.getPassword());
-        String token = jwtService.generateToken(dto.getEmail());
+        String token = jwtService.generateToken(seller);
         return new AuthResponseDto(token);
     }
 
     @PostMapping("/login")
     public AuthResponseDto login(@Valid @RequestBody LoginRequestDto dto) {
-        return authService.login(dto.getEmail(), dto.getPassword());
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
+        );
+
+        Seller seller = (Seller) sellerDetailsService.loadUserByUsername(dto.getEmail());
+        String token = jwtService.generateToken(seller);
+        return new AuthResponseDto(token);
     }
 
 }
