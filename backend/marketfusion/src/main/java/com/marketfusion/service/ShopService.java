@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface ShopService {
     Shop create(Shop shop);
-    List<Shop> getAll();
+    List<Shop> getAllForCurrentSeller();
+    Shop getById(Long id);
 }
