@@ -7,9 +7,10 @@ import com.marketfusion.dto.product.ProductUpdateDto;
 import com.marketfusion.entity.Product;
 import com.marketfusion.entity.Shop;
 import com.marketfusion.mapper.ProductMapper;
+import com.marketfusion.security.JwtService;
+import com.marketfusion.security.SellerDetailsService;
 import com.marketfusion.service.ProductService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,6 +37,12 @@ class ProductControllerTest {
 
     @MockitoBean
     private ProductService productService;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private SellerDetailsService sellerDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;
