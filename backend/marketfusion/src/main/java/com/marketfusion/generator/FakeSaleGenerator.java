@@ -2,7 +2,9 @@ package com.marketfusion.generator;
 
 import com.marketfusion.entity.Product;
 import com.marketfusion.entity.Sale;
+import com.marketfusion.entity.Seller;
 import com.marketfusion.repository.ProductRepository;
+import com.marketfusion.security.SecurityUtil;
 import com.marketfusion.service.SaleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,29 +19,39 @@ public class FakeSaleGenerator {
 
     private final ProductRepository productRepository;
     private final SaleService saleService;
+    private final SecurityUtil securityUtil;
 
     private final Random random = new Random();
 
     public void generate(int salesPerProduct) {
-        List<Product> products = productRepository.findAll();
+        Seller currentSeller = securityUtil.getCurrentSeller();
+
+        List<Product> products = productRepository.findAllByShopSellerId(currentSeller.getId());
+
+        if (products.isEmpty()) {
+            throw new IllegalStateException("No products found for current seller");
+        }
 
         for (Product product : products) {
             for (int i = 0; i < salesPerProduct; i++) {
                 Sale sale = new Sale();
                 sale.setProduct(product);
 
-                int quantity = random.nextInt(1,5);
-                double price =  product.getPrice() != null
+                int quantity = random.nextInt(1,11);
+
+                double price = product.getPrice() != null
                         ? product.getPrice()
-                        : random.nextDouble(100, 2000);
+                        : random.nextDouble(100, 500);
+                double revenue = price * quantity;
 
                 sale.setPrice(price);
                 sale.setQuantity(quantity);
-                sale.setRevenue(price * quantity);
+                sale.setRevenue(revenue);
                 sale.setSoldAt(
                         LocalDateTime.now()
-                                .minusDays(random.nextInt(30))
+                                .minusDays(random.nextInt(90))
                                 .minusHours(random.nextInt(24))
+                                .minusMinutes(random.nextInt(60))
                 );
 
                 saleService.save(sale);
