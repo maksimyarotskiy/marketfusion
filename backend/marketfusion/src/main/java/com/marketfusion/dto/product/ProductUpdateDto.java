@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class ProductUpdateDto {
     @NotBlank
@@ -13,6 +15,6 @@ public class ProductUpdateDto {
     private String sku;
 
     @NotNull
-    private Double price;
+    private BigDecimal price;
 
 }

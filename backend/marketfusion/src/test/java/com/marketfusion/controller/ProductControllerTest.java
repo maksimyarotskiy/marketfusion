@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,12 +57,12 @@ class ProductControllerTest {
 
         ProductRequestDto requestDto = new ProductRequestDto();
         requestDto.setName("Knife");
-        requestDto.setPrice(800.00);
+        requestDto.setPrice(new BigDecimal("800.0"));
 
         Product product = new Product();
         product.setId(10L);
         product.setName("Knife");
-        product.setPrice(800.0);
+        product.setPrice(new BigDecimal("800.0"));
         product.setShop(shop);
 
         when(productService.create(
@@ -96,21 +97,21 @@ class ProductControllerTest {
         Product product1 = new Product();
         product1.setId(10L);
         product1.setName("P1");
-        product1.setPrice(10.0);
+        product1.setPrice(new BigDecimal("10.0"));
         product1.setShop(shop);
         product1.setSku("sku1");
 
         Product product2 = new Product();
         product2.setId(20L);
         product2.setName("P2");
-        product2.setPrice(20.0);
+        product2.setPrice(new BigDecimal("20.0"));
         product2.setShop(shop);
         product2.setSku("sku2");
 
         Product product3 = new Product();
         product3.setId(30L);
         product3.setName("P3");
-        product3.setPrice(30.0);
+        product3.setPrice(new BigDecimal("30.0"));
         product3.setShop(shop);
         product3.setSku("sku3");
 
@@ -153,11 +154,11 @@ class ProductControllerTest {
         updatedProduct.setId(345L);
         updatedProduct.setSku("updatedSku");
         updatedProduct.setName("updatedName");
-        updatedProduct.setPrice(200.00);
+        updatedProduct.setPrice(new BigDecimal("200.0"));
         updatedProduct.setShop(shop);
 
         ProductUpdateDto updateDto = new ProductUpdateDto();
-        updateDto.setPrice(200.00);
+        updateDto.setPrice(new BigDecimal("200.0"));
         updateDto.setName("updatedName");
         updateDto.setSku("updatedSku");
 

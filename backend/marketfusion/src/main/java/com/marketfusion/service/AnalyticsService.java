@@ -1,6 +1,5 @@
 package com.marketfusion.service;
 
-
 import com.marketfusion.entity.Sale;
 import com.marketfusion.entity.Seller;
 import com.marketfusion.repository.SaleRepository;
@@ -9,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class AnalyticsService {
         return securityUtil.getCurrentSeller();
     }
 
-    public double getRevenueLast30Days() {
+    public BigDecimal getRevenueLast30Days() {
         Seller seller = getCurrentSeller();
         LocalDateTime start = LocalDateTime.now().minusDays(30);
 
@@ -33,11 +33,11 @@ public class AnalyticsService {
                 seller.getId(), start);
 
         return sales.stream()
-                .mapToDouble(Sale::getRevenue)
-                .sum();
+                .map(Sale::getRevenue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public Map<LocalDateTime, Double> getDailyRevenueLast30Days() {
+    public Map<LocalDateTime, BigDecimal> getDailyRevenueLast30Days() {
         Seller seller = getCurrentSeller();
         LocalDateTime start = LocalDateTime.now().minusDays(30);
 
@@ -47,7 +47,7 @@ public class AnalyticsService {
         return sales.stream()
                 .collect(Collectors.groupingBy(
                         sale -> sale.getSoldAt().toLocalDate().atStartOfDay(),
-                        Collectors.summingDouble(Sale::getRevenue)
+                        Collectors.reducing(BigDecimal.ZERO, Sale::getRevenue, BigDecimal::add)
                 ));
     }
 
@@ -61,11 +61,11 @@ public class AnalyticsService {
                 .map(row -> new TopProduct(
                         (Long) row[0],           // productId
                         (String) row[1],         // name
-                        (Double) row[2] // totalRevenue
+                        BigDecimal.valueOf(((Number) row[2]).doubleValue())
+                                .setScale(2, RoundingMode.HALF_UP)
                 ))
                 .toList();
     }
 
-    public record TopProduct(Long productId, String name, Double totalRevenue) {}
-
+    public record TopProduct(Long productId, String name, BigDecimal totalRevenue) {}
 }

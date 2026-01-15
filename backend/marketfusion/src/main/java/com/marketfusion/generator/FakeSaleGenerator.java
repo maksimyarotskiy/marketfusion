@@ -9,6 +9,8 @@ import com.marketfusion.service.SaleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
@@ -39,10 +41,14 @@ public class FakeSaleGenerator {
 
                 int quantity = random.nextInt(1,11);
 
-                double price = product.getPrice() != null
-                        ? product.getPrice()
+                double basePrice = product.getPrice() != null
+                        ? product.getPrice().doubleValue()
                         : random.nextDouble(100, 500);
-                double revenue = price * quantity;
+
+                BigDecimal price = BigDecimal.valueOf(basePrice)
+                        .setScale(2, RoundingMode.HALF_UP);
+
+                BigDecimal revenue = price.multiply(BigDecimal.valueOf(quantity));
 
                 sale.setPrice(price);
                 sale.setQuantity(quantity);

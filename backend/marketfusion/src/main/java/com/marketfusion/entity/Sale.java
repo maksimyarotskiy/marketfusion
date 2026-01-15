@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,9 +30,9 @@ public class Sale {
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(nullable = false)
-    private Double price;
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal price;
 
-    @Column(nullable = false)
-    private Double revenue;
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal revenue;
 }

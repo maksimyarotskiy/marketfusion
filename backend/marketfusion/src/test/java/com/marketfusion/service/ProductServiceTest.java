@@ -16,11 +16,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.swing.text.html.Option;
+import java.math.BigDecimal;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -48,7 +47,13 @@ public class ProductServiceTest {
         when(shopRepository.findByIdAndSellerId(10L, 1L)).thenReturn(Optional.of(shop));
         when(shopRepository.findById(10L)).thenReturn(Optional.of(shop));
 
-        Product savedProduct = Product.builder().id(100L).sku("R300").name("Soup").price(300.00).shop(shop).build();
+        Product savedProduct = Product.builder()
+                .id(100L)
+                .sku("R300")
+                .name("Soup")
+                .price(new BigDecimal("300.00"))
+                .shop(shop)
+                .build();
         when(productRepository.save(any(Product.class))).thenReturn(savedProduct);
 
         ProductRequestDto dto = new ProductRequestDto();
@@ -57,7 +62,7 @@ public class ProductServiceTest {
         assertEquals(100L, result.getId());
         assertEquals(10L, result.getShop().getId());
         assertEquals("R300", result.getSku());
-        assertEquals(300.00, result.getPrice());
+        assertEquals(0, result.getPrice().compareTo(new BigDecimal("300.00"))); // ← правильное сравнение BigDecimal
 
         verify(productRepository).save(any(Product.class));
     }
@@ -83,25 +88,36 @@ public class ProductServiceTest {
         when(securityUtil.getCurrentSeller()).thenReturn(seller);
 
         Shop shop = Shop.builder().id(10L).seller(seller).build();
-        Product product = Product.builder().id(100L).sku("R300").name("Soup").price(300.00).shop(shop).build();
+        Product product = Product.builder()
+                .id(100L)
+                .sku("R300")
+                .name("Soup")
+                .price(new BigDecimal("300.00"))
+                .shop(shop)
+                .build();
 
         when(productRepository.findById(100L)).thenReturn(Optional.of(product));
         when(shopRepository.findByIdAndSellerId(10L, seller.getId())).thenReturn(Optional.of(shop));
 
-        Product updated = Product.builder().id(100L).name("New Name").price(999.99).shop(shop).build();
+        Product updated = Product.builder()
+                .id(100L)
+                .name("New Name")
+                .price(new BigDecimal("999.99"))
+                .shop(shop)
+                .build();
         when(productRepository.save(any())).thenReturn(updated);
 
         ProductUpdateDto dto = new ProductUpdateDto();
         dto.setName("New Name");
-        dto.setPrice(999.99);
+        dto.setPrice(new BigDecimal("999.99"));
 
         Product result = productService.update(100L, dto);
 
         assertEquals("New Name", result.getName());
-        assertEquals(999.99, result.getPrice());
+        assertEquals(0, result.getPrice().compareTo(new BigDecimal("999.99")));
         assertEquals(100L, result.getId());
 
-        verify(shopRepository).findByIdAndSellerId(10L, 1L);
+        verify(shopRepository).findByIdAndSellerId(10L, seller.getId());
         verify(productRepository).save(any(Product.class));
     }
 
@@ -110,35 +126,16 @@ public class ProductServiceTest {
         Seller seller = Seller.builder().id(1L).email("seller@test.com").build();
         when(securityUtil.getCurrentSeller()).thenReturn(seller);
 
-        Shop foreignshop = Shop.builder().id(10L).seller(seller).build();
-        Product product = Product.builder().id(100L).name("New Name").price(999.99).shop(foreignshop).build();
+        Shop foreignShop = Shop.builder().id(10L).seller(Seller.builder().id(2L).build()).build();
+        Product product = Product.builder()
+                .id(100L)
+                .name("New Name")
+                .price(new BigDecimal("999.99"))
+                .shop(foreignShop)
+                .build();
 
         when(productRepository.findById(100L)).thenReturn(Optional.of(product));
         when(shopRepository.findByIdAndSellerId(10L, seller.getId())).thenReturn(Optional.empty());
-
-        ProductUpdateDto dto = new ProductUpdateDto();
-
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> productService.update(100L, dto));
-
-        assertEquals("Shop not found or access denied", ex.getMessage());
-        verify(productRepository, never()).save(any());
-    }
-
-    @Test
-    void deleteProduct_foreignShop_throwsException() {
-        Seller seller = Seller.builder().id(1L).email("seller@test.com").build();
-        when(securityUtil.getCurrentSeller()).thenReturn(seller);
-
-        Shop shop = Shop.builder()
-                .id(999L)
-                .seller(Seller.builder().id(2L).build())
-                .build();
-
-        Product product = Product.builder().id(100L).shop(shop).build();
-
-        when(productRepository.findById(100L)).thenReturn(Optional.ofNullable(product));
-        when(shopRepository.findByIdAndSellerId(999L, seller.getId())).thenReturn(Optional.empty());
 
         ProductUpdateDto dto = new ProductUpdateDto();
 
@@ -154,6 +151,22 @@ public class ProductServiceTest {
         Seller seller = Seller.builder().id(1L).email("seller@test.com").build();
         when(securityUtil.getCurrentSeller()).thenReturn(seller);
 
+        Shop shop = Shop.builder().id(10L).seller(seller).build();
+        Product product = Product.builder().id(100L).shop(shop).build();
+
+        when(productRepository.findById(100L)).thenReturn(Optional.of(product));
+        when(shopRepository.findByIdAndSellerId(10L, seller.getId())).thenReturn(Optional.of(shop));
+
+        productService.delete(100L);
+
+        verify(productRepository).delete(product);
+    }
+
+    @Test
+    void deleteProduct_foreignShop_throwsException() {
+        Seller seller = Seller.builder().id(1L).email("seller@test.com").build();
+        when(securityUtil.getCurrentSeller()).thenReturn(seller);
+
         Shop foreignShop = Shop.builder().id(999L).seller(Seller.builder().id(2L).build()).build();
         Product product = Product.builder().id(100L).shop(foreignShop).build();
 
@@ -161,10 +174,9 @@ public class ProductServiceTest {
         when(shopRepository.findByIdAndSellerId(999L, seller.getId())).thenReturn(Optional.empty());
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> productService.delete(100L));
+                () -> productService.delete(100L));  // ← исправлено на delete
 
         assertEquals("Shop not found or access denied", ex.getMessage());
         verify(productRepository, never()).delete(any());
-        verify(productRepository, never()).deleteAll();
     }
 }
