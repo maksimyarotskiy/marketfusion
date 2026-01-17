@@ -67,5 +67,71 @@ public class AnalyticsService {
                 .toList();
     }
 
+    public BigDecimal getRevenueBetween(LocalDateTime from, LocalDateTime to) {
+        Seller seller = getCurrentSeller();
+
+        List<Sale> sales = saleRepository.findBySellerIdAndSoldAtBetween(
+                seller.getId(), from, to);
+
+        return sales.stream()
+                .map(Sale::getRevenue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public Map<LocalDateTime, BigDecimal> getDailyRevenueBetween(LocalDateTime from, LocalDateTime to) {
+        Seller seller = getCurrentSeller();
+
+        List<Sale> sales = saleRepository.findBySellerIdAndSoldAtBetween(
+                seller.getId(), from, to);
+
+        return sales.stream()
+                .collect(Collectors.groupingBy(
+                        sale -> sale.getSoldAt().toLocalDate().atStartOfDay(),
+                        Collectors.reducing(BigDecimal.ZERO, Sale::getRevenue, BigDecimal::add)
+                ));
+    }
+
+    public BigDecimal getAverageCheckBetween(LocalDateTime from, LocalDateTime to) {
+        Seller seller = getCurrentSeller();
+
+        List<Sale> sales = saleRepository.findBySellerIdAndSoldAtBetween(
+                seller.getId(), from, to);
+
+        if (sales.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal totalRevenue = sales.stream()
+                .map(Sale::getRevenue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        long totalItems = sales.stream()
+                .mapToLong(Sale::getQuantity)
+                .sum();
+
+        return totalItems == 0 ? BigDecimal.ZERO : totalRevenue.divide(
+                BigDecimal.valueOf(totalItems), 2, RoundingMode.HALF_UP);
+    }
+
+    public long getTotalItemsSoldBetween(LocalDateTime from, LocalDateTime to) {
+        Seller seller = getCurrentSeller();
+        return saleRepository.sumQuantityBySellerIdAndSoldAtBetween(
+                seller.getId(), from, to);
+    }
+
+    public Map<String, BigDecimal> getRevenueByPlatformBetween(LocalDateTime from, LocalDateTime to) {
+        Seller seller = getCurrentSeller();
+
+        List<Object[]> results = saleRepository.sumRevenueByPlatformAndSellerIdBetween(
+                seller.getId(), from, to);
+
+        return results.stream()
+                .collect(Collectors.toMap(
+                        row -> (String) row[0],                         // platform
+                        row -> BigDecimal.valueOf(((Number) row[1]).doubleValue())
+                                .setScale(2, RoundingMode.HALF_UP)
+                ));
+    }
+
     public record TopProduct(Long productId, String name, BigDecimal totalRevenue) {}
 }
