@@ -7,18 +7,32 @@
 # === Maven ===
 target/
 backend/**/target/
-frontend/**/target/
+frontend-vue/**/target/
 .mvn/wrapper/maven-wrapper.jar
 
 # === Node.js / Frontend ===
 node_modules/
-frontend/node_modules/
+frontend-vue/node_modules/
 dist/
-frontend/dist/
+frontend-vue/dist/
+dist-ssr/
+frontend-vue/dist-ssr/
 build/
-frontend/build/
+frontend-vue/build/
 .env
 .env.local
+.env.*.local
+
+# === Логи и кэш ===
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+coverage/
+.vite/
+.eslintcache
 
 # === Общие IDE-файлы ===
 .classpath
@@ -41,11 +55,3 @@ nbdist/
 
 # === macOS ===
 .DS_Store
-
-# === Исключения===
-!**/src/main/**/target/
-!**/src/test/**/target/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-backend/marketfusion/HELP.md
