@@ -38,6 +38,15 @@ public class AnalyticsController {
         return ResponseEntity.ok(analyticsService.getTopProducts(limit));
     }
 
+    @Operation(summary = "Топ-N товаров по выручке за период")
+    @GetMapping("/top-products/custom")
+    public ResponseEntity<List<AnalyticsService.TopProduct>> getTopProductsCustom(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
+            @RequestParam(defaultValue = "5") int limit) {
+        return ResponseEntity.ok(analyticsService.getTopProductsBetween(from, to, limit));
+    }
+
     @Operation(summary = "Выручка за произвольный период")
     @GetMapping("/revenue/custom")
     public ResponseEntity<BigDecimal> getRevenueCustom(

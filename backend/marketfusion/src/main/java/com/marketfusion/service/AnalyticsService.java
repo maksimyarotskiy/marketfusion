@@ -59,8 +59,24 @@ public class AnalyticsService {
 
         return results.stream()
                 .map(row -> new TopProduct(
-                        (Long) row[0],           // productId
-                        (String) row[1],         // name
+                        (Long) row[0],
+                        (String) row[1],
+                        BigDecimal.valueOf(((Number) row[2]).doubleValue())
+                                .setScale(2, RoundingMode.HALF_UP)
+                ))
+                .toList();
+    }
+
+    public List<TopProduct> getTopProductsBetween(LocalDateTime from, LocalDateTime to, int limit) {
+        Seller seller = getCurrentSeller();
+
+        List<Object[]> results = saleRepository.findTopProductsByRevenueBetween(
+                seller.getId(), from, to, limit);
+
+        return results.stream()
+                .map(row -> new TopProduct(
+                        (Long) row[0],
+                        (String) row[1],
                         BigDecimal.valueOf(((Number) row[2]).doubleValue())
                                 .setScale(2, RoundingMode.HALF_UP)
                 ))
@@ -127,7 +143,7 @@ public class AnalyticsService {
 
         return results.stream()
                 .collect(Collectors.toMap(
-                        row -> (String) row[0],                         // platform
+                        row -> (String) row[0],
                         row -> BigDecimal.valueOf(((Number) row[1]).doubleValue())
                                 .setScale(2, RoundingMode.HALF_UP)
                 ));
