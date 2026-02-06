@@ -18,8 +18,9 @@ public class Shop {
 
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "platform")  //marketplace
-    private String platform;
+    private Platform platform;
 
     @Column(name = "api_key")
     private String apiKey;

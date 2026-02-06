@@ -2,6 +2,7 @@ package com.marketfusion.service;
 
 import com.marketfusion.dto.product.ProductRequestDto;
 import com.marketfusion.dto.product.ProductUpdateDto;
+import com.marketfusion.entity.Platform;
 import com.marketfusion.entity.Product;
 import com.marketfusion.entity.Role;
 import com.marketfusion.entity.Seller;
@@ -43,7 +44,7 @@ public class ProductServiceTest {
         Seller currentSeller = Seller.builder().id(1L).email("test@seller.com").role(Role.SELLER).build();
         when(securityUtil.getCurrentSeller()).thenReturn(currentSeller);
 
-        Shop shop = Shop.builder().id(10L).name("My store").platform("WB").apiKey("1111").seller(currentSeller).build();
+        Shop shop = Shop.builder().id(10L).name("My store").platform(Platform.WB).apiKey("1111").seller(currentSeller).build();
         when(shopRepository.findByIdAndSellerId(10L, 1L)).thenReturn(Optional.of(shop));
         when(shopRepository.findById(10L)).thenReturn(Optional.of(shop));
 

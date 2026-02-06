@@ -93,7 +93,7 @@ const chartData = computed(() => ({
       borderDash: [6, 4],
     },
     {
-      label: 'Накопленная выручка',
+      label: 'Общая выручка',
       data: cumulative.value,
       borderColor: '#f97316',
       backgroundColor: 'rgba(249, 115, 22, 0.08)',

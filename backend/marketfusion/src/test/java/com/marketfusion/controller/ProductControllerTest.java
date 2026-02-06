@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marketfusion.dto.product.ProductRequestDto;
 import com.marketfusion.dto.product.ProductResponseDto;
 import com.marketfusion.dto.product.ProductUpdateDto;
+import com.marketfusion.entity.Platform;
 import com.marketfusion.entity.Product;
 import com.marketfusion.entity.Shop;
 import com.marketfusion.mapper.ProductMapper;
@@ -147,7 +148,7 @@ class ProductControllerTest {
         Shop shop = new Shop();
         shop.setId(1L);
         shop.setName("Хозяйственник");
-        shop.setPlatform("WB");
+        shop.setPlatform(Platform.WB);
         shop.setApiKey("123575442");
 
         Product updatedProduct = new Product();

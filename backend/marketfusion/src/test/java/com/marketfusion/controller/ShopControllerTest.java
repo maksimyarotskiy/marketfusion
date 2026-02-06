@@ -2,6 +2,7 @@ package com.marketfusion.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marketfusion.dto.shop.ShopRequestDto;
+import com.marketfusion.entity.Platform;
 import com.marketfusion.entity.Seller;
 import com.marketfusion.entity.Shop;
 import com.marketfusion.security.JwtService;
@@ -53,7 +54,7 @@ public class ShopControllerTest {
         // given
         ShopRequestDto requestDto = new ShopRequestDto();
         requestDto.setName("Wildberries Main Store");
-        requestDto.setPlatform("WB");
+        requestDto.setPlatform(Platform.WB);
         requestDto.setApiKey("super-secret-key-123");
         Seller currentSeller = Seller.builder().id(10L).email("seller@test.com").build();
         when(securityUtil.getCurrentSeller()).thenReturn(currentSeller);
@@ -87,14 +88,14 @@ public class ShopControllerTest {
         Shop shop1 = Shop.builder()
                 .id(1L)
                 .name("WB Store")
-                .platform("WB")
+                .platform(Platform.WB)
                 .seller(currentSeller)
                 .build();
 
         Shop shop2 = Shop.builder()
                 .id(2L)
                 .name("Ozon Store")
-                .platform("OZON")
+                .platform(Platform.OZON)
                 .seller(currentSeller)
                 .build();
 
