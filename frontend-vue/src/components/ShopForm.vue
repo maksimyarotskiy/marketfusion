@@ -20,7 +20,6 @@
           <option value="WB">Wildberries</option>
           <option value="OZON">Ozon</option>
           <option value="YANDEX">Яндекс Маркет</option>
-          <option value="OTHER">Другое</option>
         </select>
       </div>
 

@@ -1,5 +1,6 @@
 package com.marketfusion.service;
 
+import com.marketfusion.dto.analytics.ProductSalesSummaryDto;
 import com.marketfusion.entity.Sale;
 import com.marketfusion.entity.Seller;
 import com.marketfusion.repository.SaleRepository;
@@ -147,6 +148,23 @@ public class AnalyticsService {
                         row -> BigDecimal.valueOf(((Number) row[1]).doubleValue())
                                 .setScale(2, RoundingMode.HALF_UP)
                 ));
+    }
+
+    public List<ProductSalesSummaryDto> getProductSalesSummaryBetween(LocalDateTime from, LocalDateTime to) {
+        Seller seller = getCurrentSeller();
+
+        List<Object[]> results = saleRepository.findProductSalesSummaryBetween(
+                seller.getId(), from, to);
+
+        return results.stream()
+                .map(row -> new ProductSalesSummaryDto(
+                        (Long) row[0],
+                        (String) row[1],
+                        (String) row[2],
+                        ((Number) row[3]).longValue(),
+                        BigDecimal.valueOf(((Number) row[4]).doubleValue()).setScale(2, RoundingMode.HALF_UP)
+                ))
+                .toList();
     }
 
     public record TopProduct(Long productId, String name, BigDecimal totalRevenue) {}

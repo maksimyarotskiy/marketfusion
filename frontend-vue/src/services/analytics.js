@@ -29,3 +29,6 @@ export const getTopProducts = (limit = 5, from, to) => {
 
 export const getRevenueByPlatform = (from, to) =>
   http.get(`/api/analytics/revenue-by-platform?from=${from}&to=${to}`)
+
+export const getProductSalesSummary = (from, to) =>
+  http.get('/api/analytics/products-summary', { params: { from, to } })

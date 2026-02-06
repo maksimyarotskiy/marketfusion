@@ -1,5 +1,6 @@
 package com.marketfusion.controller;
 
+import com.marketfusion.dto.analytics.ProductSalesSummaryDto;
 import com.marketfusion.service.AnalyticsService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -85,5 +86,13 @@ public class AnalyticsController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
         return ResponseEntity.ok(analyticsService.getRevenueByPlatformBetween(from, to));
+    }
+
+    @Operation(summary = "Сводка продаж по товарам за период")
+    @GetMapping("/products-summary")
+    public ResponseEntity<List<ProductSalesSummaryDto>> getProductSalesSummary(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
+        return ResponseEntity.ok(analyticsService.getProductSalesSummaryBetween(from, to));
     }
 }

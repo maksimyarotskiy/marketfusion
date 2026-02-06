@@ -66,6 +66,7 @@
     <RevenueChart v-if="revenueData" :data="revenueData" />
     <PlatformRevenueChart v-if="analytics?.revenueByPlatform" :data="analytics.revenueByPlatform" />
     <PlatformRevenuePieChart v-if="analytics?.revenueByPlatform" :data="analytics.revenueByPlatform" />
+    <ProductSalesTable v-if="productSummary" :rows="productSummary" />
   </section>
 </template>
 
@@ -74,10 +75,12 @@ import { ref } from 'vue'
 import RevenueChart from '@/components/RevenueChart.vue'
 import PlatformRevenueChart from '@/components/PlatformRevenueChart.vue'
 import PlatformRevenuePieChart from '@/components/PlatformRevenuePieChart.vue'
+import ProductSalesTable from '@/components/ProductSalesTable.vue'
 import { useToast } from '@/composables/useToast'
 import {
   getAverageCheck,
   getDailyRevenue,
+  getProductSalesSummary,
   getRevenueByPlatform,
   getRevenueTotal,
   getTopProducts,
@@ -86,6 +89,7 @@ import {
 
 const analytics = ref(null)
 const revenueData = ref(null)
+const productSummary = ref(null)
 const isLoading = ref(false)
 
 const { showToast } = useToast()
@@ -125,7 +129,7 @@ const loadAll = async () => {
     const from = toStartOfDayIso(fromDate.value)
     const to = toEndOfDayIso(toDate.value)
 
-    const [revenue30, avgCheck, totalItems, daily, topProducts, revenueByPlatform] =
+    const [revenue30, avgCheck, totalItems, daily, topProducts, revenueByPlatform, summary] =
       await Promise.all([
         getRevenueTotal(from, to).then((r) => r.data),
         getAverageCheck(from, to).then((r) => r.data),
@@ -133,6 +137,7 @@ const loadAll = async () => {
         getDailyRevenue(from, to).then((r) => r.data),
         getTopProducts(5, from, to).then((r) => r.data),
         getRevenueByPlatform(from, to).then((r) => r.data),
+        getProductSalesSummary(from, to).then((r) => r.data),
       ])
 
     analytics.value = {
@@ -143,6 +148,7 @@ const loadAll = async () => {
       revenueByPlatform,
     }
     revenueData.value = daily
+    productSummary.value = summary
   } catch (err) {
     showToast('Ошибка загрузки аналитики', 'error')
   } finally {

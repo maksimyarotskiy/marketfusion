@@ -84,4 +84,19 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
             @Param("sellerId") Long sellerId,
             @Param("from") LocalDateTime from,
             @Param("to") LocalDateTime to);
+
+    // Сводка продаж по товарам за период
+    @Query(value = """
+        SELECT p.id, p.name, p.sku, SUM(s.quantity) as totalQty, SUM(s.revenue) as totalRevenue
+        FROM sales s
+        JOIN products p ON s.product_id = p.id
+        JOIN shops sh ON p.shop_id = sh.id
+        WHERE sh.seller_id = :sellerId
+        AND s.sold_at BETWEEN :from AND :to
+        GROUP BY p.id, p.name, p.sku
+        """, nativeQuery = true)
+    List<Object[]> findProductSalesSummaryBetween(
+            @Param("sellerId") Long sellerId,
+            @Param("from") LocalDateTime from,
+            @Param("to") LocalDateTime to);
 }
