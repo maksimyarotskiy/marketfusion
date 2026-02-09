@@ -167,5 +167,32 @@ public class AnalyticsService {
                 .toList();
     }
 
+    public String getProductSalesSummaryCsv(LocalDateTime from, LocalDateTime to) {
+        List<ProductSalesSummaryDto> rows = getProductSalesSummaryBetween(from, to);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("productId,name,sku,totalQuantity,totalRevenue\n");
+
+        for (ProductSalesSummaryDto r : rows) {
+            sb.append(r.getProductId()).append(',')
+                    .append(escapeCsv(r.getName())).append(',')
+                    .append(escapeCsv(r.getSku())).append(',')
+                    .append(r.getTotalQuantity()).append(',')
+                    .append(r.getTotalRevenue())
+                    .append('\n');
+        }
+
+        return sb.toString();
+    }
+
+    private String escapeCsv(String value) {
+        if (value == null) return "";
+        String v = value.replace("\"", "\"\"");
+        if (v.contains(",") || v.contains("\"") || v.contains("\n")) {
+            return "\"" + v + "\"";
+        }
+        return v;
+    }
+
     public record TopProduct(Long productId, String name, BigDecimal totalRevenue) {}
 }

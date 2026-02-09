@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import ToastMessage from '@/components/ToastMessage.vue'
 import { useToast } from '@/composables/useToast'
@@ -12,12 +12,17 @@ const handleLogout = () => {
   router.push({ name: 'login' })
 }
 
+const applyTheme = (theme) => {
+  if (!theme) return
+  document.documentElement.setAttribute('data-theme', theme)
+}
+
 onMounted(() => {
   window.addEventListener('auth:logout', handleLogout)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('auth:logout', handleLogout)
+  const saved = localStorage.getItem('theme')
+  if (saved) {
+    applyTheme(saved)
+  }
 })
 </script>
 
@@ -32,6 +37,6 @@ onUnmounted(() => {
 #app {
   min-height: 100vh;
   font-family: 'Manrope', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  color: #0f172a;
+  color: var(--text);
 }
 </style>

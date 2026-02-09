@@ -54,6 +54,7 @@ const handleSubmit = async () => {
     const request = isLogin.value ? login : register
     const res = await request({ email: email.value, password: password.value })
     localStorage.setItem('accessToken', res.data.accessToken)
+    localStorage.setItem('userEmail', email.value)
     emit('authenticated')
     showToast('Вы успешно вошли.', 'success')
   } catch (err) {

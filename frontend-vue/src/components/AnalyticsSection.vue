@@ -2,9 +2,14 @@
   <section class="block">
     <div class="block-header">
       <h2>Аналитика</h2>
-      <button @click="loadAll" class="secondary-btn" :disabled="isLoading">
-        {{ isLoading ? 'Загрузка...' : 'Загрузить аналитику' }}
-      </button>
+      <div class="header-actions">
+        <button @click="loadAll" class="secondary-btn" :disabled="isLoading">
+          {{ isLoading ? 'Загрузка...' : 'Загрузить аналитику' }}
+        </button>
+        <button @click="downloadCsv" class="primary-btn" :disabled="isLoading">
+          Скачать CSV
+        </button>
+      </div>
     </div>
 
     <div class="date-controls">
@@ -153,6 +158,45 @@ const loadAll = async () => {
     showToast('Ошибка загрузки аналитики', 'error')
   } finally {
     isLoading.value = false
+  }
+}
+
+const downloadCsv = async () => {
+  if (!fromDate.value || !toDate.value) {
+    showToast('Выберите обе даты', 'error')
+    return
+  }
+
+  if (fromDate.value > toDate.value) {
+    showToast('Дата начала не может быть позже даты окончания', 'error')
+    return
+  }
+
+  const from = toStartOfDayIso(fromDate.value)
+  const to = toEndOfDayIso(toDate.value)
+  const base = import.meta.env.VITE_API_URL || 'http://localhost:8080'
+  const url = `${base}/api/analytics/products-summary.csv?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`
+
+  try {
+    const token = localStorage.getItem('accessToken')
+    const res = await fetch(url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`)
+    }
+
+    const blob = await res.blob()
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = `product-sales-${fromDate.value}_${toDate.value}.csv`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(link.href)
+  } catch (err) {
+    showToast('Не удалось скачать CSV', 'error')
   }
 }
 

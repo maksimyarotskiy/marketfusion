@@ -95,4 +95,17 @@ public class AnalyticsController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
         return ResponseEntity.ok(analyticsService.getProductSalesSummaryBetween(from, to));
     }
+
+    @Operation(summary = "Сводка продаж по товарам (CSV) за период")
+    @GetMapping(value = "/products-summary.csv", produces = "text/csv")
+    public ResponseEntity<String> getProductSalesSummaryCsv(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
+
+        String csv = analyticsService.getProductSalesSummaryCsv(from, to);
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=\"product-sales.csv\"")
+                .body(csv);
+    }
 }
