@@ -26,6 +26,8 @@
 
     <ProductsSection :shop="selectedShop" @close="selectedShop = null" />
 
+    <StocksSection />
+
     <AnalyticsSection />
   </div>
 </template>
@@ -34,6 +36,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import ShopSection from '@/components/ShopSection.vue'
 import ProductsSection from '@/components/ProductsSection.vue'
+import StocksSection from '@/components/StocksSection.vue'
 import AnalyticsSection from '@/components/AnalyticsSection.vue'
 
 const selectedShop = ref(null)

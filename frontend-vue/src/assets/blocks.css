@@ -194,6 +194,38 @@
   text-align: right;
 }
 
+.table tr.low {
+  background: rgba(248, 113, 113, 0.08);
+}
+
+.sort-btn {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.sort-btn.num {
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.sort-indicator {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.table-hint {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 .state {
   padding: 16px;
   border-radius: 10px;
