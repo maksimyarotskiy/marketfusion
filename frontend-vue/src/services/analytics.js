@@ -14,6 +14,9 @@ export const getDailyRevenue = (from, to) => {
   return http.get('/api/analytics/daily-revenue')
 }
 
+export const getDailyQuantity = (from, to) =>
+  http.get('/api/analytics/daily-quantity/custom', { params: { from, to } })
+
 export const getAverageCheck = (from, to) =>
   http.get(`/api/analytics/average-check?from=${from}&to=${to}`)
 

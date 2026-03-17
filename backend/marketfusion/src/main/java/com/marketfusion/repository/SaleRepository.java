@@ -113,4 +113,19 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
     List<Object[]> sumQuantityByProductAfter(
             @Param("sellerId") Long sellerId,
             @Param("from") LocalDateTime from);
+
+    @Query(value = """
+        SELECT DATE(s.sold_at) as day, SUM(s.quantity) as totalQty
+        FROM sales s
+        JOIN products p ON s.product_id = p.id
+        JOIN shops sh ON p.shop_id = sh.id
+        WHERE sh.seller_id = :sellerId
+        AND s.sold_at BETWEEN :from AND :to
+        GROUP BY DATE(s.sold_at)
+        ORDER BY day
+        """, nativeQuery = true)
+    List<Object[]> sumDailyQuantityBetween(
+            @Param("sellerId") Long sellerId,
+            @Param("from") LocalDateTime from,
+            @Param("to") LocalDateTime to);
 }

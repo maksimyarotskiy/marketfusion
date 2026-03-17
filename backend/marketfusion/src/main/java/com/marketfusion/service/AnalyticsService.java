@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -106,6 +109,31 @@ public class AnalyticsService {
                         sale -> sale.getSoldAt().toLocalDate().atStartOfDay(),
                         Collectors.reducing(BigDecimal.ZERO, Sale::getRevenue, BigDecimal::add)
                 ));
+    }
+
+    public Map<LocalDateTime, Long> getDailyQuantityBetween(LocalDateTime from, LocalDateTime to) {
+        Seller seller = getCurrentSeller();
+        List<Object[]> rows = saleRepository.sumDailyQuantityBetween(seller.getId(), from, to);
+
+        return rows.stream().collect(Collectors.toMap(
+                row -> toLocalDate(row[0]).atStartOfDay(),
+                row -> ((Number) row[1]).longValue()
+        ));
+    }
+
+    private LocalDate toLocalDate(Object raw) {
+        if (raw instanceof LocalDate localDate) {
+            return localDate;
+        }
+        if (raw instanceof Date sqlDate) {
+            return sqlDate.toLocalDate();
+        }
+        if (raw instanceof Timestamp timestamp) {
+            return timestamp.toLocalDateTime().toLocalDate();
+        }
+
+        String text = raw.toString();
+        return LocalDate.parse(text.length() >= 10 ? text.substring(0, 10) : text);
     }
 
     public BigDecimal getAverageCheckBetween(LocalDateTime from, LocalDateTime to) {

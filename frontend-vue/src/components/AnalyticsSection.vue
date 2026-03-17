@@ -69,6 +69,16 @@
     </div>
 
     <RevenueChart v-if="revenueData" :data="revenueData" />
+    <CorrelationScatterChart
+      v-if="revenueData && quantityData"
+      :revenue-by-day="revenueData"
+      :quantity-by-day="quantityData"
+    />
+    <RegressionChart
+      v-if="revenueData && quantityData"
+      :revenue-by-day="revenueData"
+      :quantity-by-day="quantityData"
+    />
     <PlatformRevenueChart v-if="analytics?.revenueByPlatform" :data="analytics.revenueByPlatform" />
     <PlatformRevenuePieChart v-if="analytics?.revenueByPlatform" :data="analytics.revenueByPlatform" />
     <ProductSalesTable v-if="productSummary" :rows="productSummary" />
@@ -81,9 +91,12 @@ import RevenueChart from '@/components/RevenueChart.vue'
 import PlatformRevenueChart from '@/components/PlatformRevenueChart.vue'
 import PlatformRevenuePieChart from '@/components/PlatformRevenuePieChart.vue'
 import ProductSalesTable from '@/components/ProductSalesTable.vue'
+import CorrelationScatterChart from '@/components/CorrelationScatterChart.vue'
+import RegressionChart from '@/components/RegressionChart.vue'
 import { useToast } from '@/composables/useToast'
 import {
   getAverageCheck,
+  getDailyQuantity,
   getDailyRevenue,
   getProductSalesSummary,
   getRevenueByPlatform,
@@ -94,6 +107,7 @@ import {
 
 const analytics = ref(null)
 const revenueData = ref(null)
+const quantityData = ref(null)
 const productSummary = ref(null)
 const isLoading = ref(false)
 
@@ -134,12 +148,13 @@ const loadAll = async () => {
     const from = toStartOfDayIso(fromDate.value)
     const to = toEndOfDayIso(toDate.value)
 
-    const [revenue30, avgCheck, totalItems, daily, topProducts, revenueByPlatform, summary] =
+    const [revenue30, avgCheck, totalItems, daily, dailyQty, topProducts, revenueByPlatform, summary] =
       await Promise.all([
         getRevenueTotal(from, to).then((r) => r.data),
         getAverageCheck(from, to).then((r) => r.data),
         getTotalItems(from, to).then((r) => r.data),
         getDailyRevenue(from, to).then((r) => r.data),
+        getDailyQuantity(from, to).then((r) => r.data),
         getTopProducts(5, from, to).then((r) => r.data),
         getRevenueByPlatform(from, to).then((r) => r.data),
         getProductSalesSummary(from, to).then((r) => r.data),
@@ -153,6 +168,7 @@ const loadAll = async () => {
       revenueByPlatform,
     }
     revenueData.value = daily
+    quantityData.value = dailyQty
     productSummary.value = summary
   } catch (err) {
     showToast('Ошибка загрузки аналитики', 'error')

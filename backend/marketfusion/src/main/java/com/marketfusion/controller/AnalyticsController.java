@@ -64,6 +64,14 @@ public class AnalyticsController {
         return ResponseEntity.ok(analyticsService.getDailyRevenueBetween(from, to));
     }
 
+    @Operation(summary = "Количество проданных товаров по дням за произвольный период")
+    @GetMapping("/daily-quantity/custom")
+    public ResponseEntity<Map<LocalDateTime, Long>> getDailyQuantityCustom(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
+        return ResponseEntity.ok(analyticsService.getDailyQuantityBetween(from, to));
+    }
+
     @Operation(summary = "Средний чек за произвольный период")
     @GetMapping("/average-check")
     public ResponseEntity<BigDecimal> getAverageCheck(
