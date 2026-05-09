@@ -3,6 +3,9 @@
     <div class="block-header">
       <h2>Аналитика</h2>
       <div class="header-actions">
+        <button @click="openRecommendations" class="secondary-btn" :disabled="isLoading">
+          Советы
+        </button>
         <button @click="loadAll" class="secondary-btn" :disabled="isLoading">
           {{ isLoading ? 'Загрузка...' : 'Загрузить аналитику' }}
         </button>
@@ -87,6 +90,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import RevenueChart from '@/components/RevenueChart.vue'
 import PlatformRevenueChart from '@/components/PlatformRevenueChart.vue'
 import PlatformRevenuePieChart from '@/components/PlatformRevenuePieChart.vue'
@@ -112,6 +116,7 @@ const productSummary = ref(null)
 const isLoading = ref(false)
 
 const { showToast } = useToast()
+const router = useRouter()
 
 const toInputDate = (date) => date.toISOString().slice(0, 10)
 
@@ -214,6 +219,16 @@ const downloadCsv = async () => {
   } catch (err) {
     showToast('Не удалось скачать CSV', 'error')
   }
+}
+
+const openRecommendations = () => {
+  router.push({
+    name: 'recommendations',
+    query: {
+      from: fromDate.value,
+      to: toDate.value,
+    },
+  })
 }
 
 const formatCurrency = (value) => {
