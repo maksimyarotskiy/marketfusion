@@ -49,7 +49,7 @@
 
     <section v-if="analysis" class="block">
       <div class="block-header">
-        <h2>Автоматически сформированные советы</h2>
+        <h2>Пользовательские советы</h2>
       </div>
 
       <div class="recommendation-list">
